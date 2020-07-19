@@ -6,4 +6,13 @@
 <h1>Index</h1>
 
 
-<a class="nav-link text-dark" asp-area=""  asp-action="New">Create new game</a>
+<a class="nav-link text-dark" asp-area="" asp-action="New">Create new game...</a>
+
+@using (Html.BeginForm("Index", "Game"))
+{
+    <input type="text" id="width" name="Width" value="30" />
+    <input type="text" id="height" name="Height" value="30" />
+    <input type="submit" value="Redraw" />
+}
+
+@Html.Raw(ViewBag.HexImage)

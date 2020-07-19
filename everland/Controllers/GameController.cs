@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using everland.services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,8 +13,29 @@ namespace everland.Controllers
         // GET: GameController
         public ActionResult Index()
         {
+            //return View();
+
+            var w = new World(30, 30);
+
+            
+
+            ViewBag.HexImage = w.Draw(500, 500);
+            return View();
+
+            
+        }
+
+        [HttpPost]
+        public ActionResult Index(int width, int height)
+        {
+            var w = new World(width, height);
+
+
+
+            ViewBag.HexImage = w.Draw(500, 500);
             return View();
         }
+
 
         // GET: GameController/Details/5
         public ActionResult Details(int id)

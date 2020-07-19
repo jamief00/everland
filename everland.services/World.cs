@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -35,20 +36,20 @@ namespace everland.services
 
         }
 
-        public void Draw(int width, int height)
+        public string Draw(int width, int height)
         {
             //var b = new Bitmap(width, height);
 
-            var hexWidth = Math.Floor((double)(width / (Columns*2)));
+            var hexWidth = Math.Floor((double)(width / (Columns*1.75)));
             var hexHeight = Math.Floor((double)(height / (Rows+1)))*2;
 
             hexWidth = hexHeight = Math.Min(hexWidth, hexHeight);
 
             var svgDoc = new SvgDocument
             {
-                Width = 1000,
-                Height = 1000,
-                ViewBox = new SvgViewBox(0, 0, 1000, 1000),
+                Width = width,
+                Height = height,
+                ViewBox = new SvgViewBox(0, 0, width, height),
             };
 
             var group = new SvgGroup();
@@ -58,11 +59,11 @@ namespace everland.services
             {
                 for (var q=0; q<Hexes.GetLength(1); q++)
                 {
-                    //var currentHex = Hexes[r, q];
+                
                     int offsetRow = !(r % 2 == 0) ? 1 : 0;
 
-                    var originX = (q * hexWidth * 1.5) + (hexWidth / 2) + (offsetRow * hexWidth*0.75);// ((q+1) * hexWidth)/2;
-                    var originY = (r * hexHeight/2) + (hexHeight / 2); // ((r+1) * hexHeight)/2;
+                    var originX = (q * hexWidth * 1.5) + (hexWidth / 2) + (offsetRow * hexWidth*0.75);
+                    var originY = (r * hexHeight/2) + (hexHeight / 2); 
 
                     var ax = originX - (hexWidth / 4);
                     var ay = originY - (hexHeight / 2);
@@ -106,7 +107,7 @@ namespace everland.services
                     p.Points.Add(new SvgUnit((float)fy));
 
                     p.Stroke = new SvgColourServer(Color.Black);
-                    p.Fill = new SvgColourServer(Color.White);
+                    p.Fill = new SvgColourServer(r%2==0 ? Color.White : Color.AliceBlue);
 
                     group.Children.Add(p);
 
@@ -124,7 +125,18 @@ namespace everland.services
             }
 
             //b.Save(@"c:\temp\output.jpg");
-            svgDoc.Write(@"c:\temp\output.svg");
+            //svgDoc.Write(@"c:\temp\output.svg");
+
+
+            using (var stream = new MemoryStream())
+            {
+                svgDoc.Write(stream);
+                return Encoding.UTF8.GetString(stream.GetBuffer());
+
+            }
+                
+            
+
 
         }
 
